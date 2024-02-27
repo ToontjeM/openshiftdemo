@@ -1,4 +1,4 @@
-# Description
+# EDB Postgres for Kubernetes on OpenShift Local
 In this demo I'll show you how to create a PostgreSQL cluster with the Red Hat OpenShift operator called EDB Postgres for Kubernetes. The features that I want to show you are:
 - Kubernetes plugin install
 - EDB Postgres for Kubernetes operator install
@@ -16,15 +16,42 @@ In this demo I'll show you how to create a PostgreSQL cluster with the Red Hat O
 - Operator upgrade
 - Last EDB Postgres for Kubernetes tested version is 1.20.2
 
-# Prerequisites
-- Red Hat OpenShift environment (Red Hat Code Ready also works)
-- oc (OpenShift CLI installed)
-- jq (optional if you want to format JSON logs outputs)
-
-# Demo
-Execute commands in the correct order:
+## Demo prep
+- Install RedHat OpenShift Local from [https://developers.redhat.com/products/openshift-local/overview](https://developers.redhat.com/products/openshift-local/overview)
+- Make sure you have your pull secret downloaded. Instructions on how to get the pull secret [here](https://console.redhat.com/openshift/create/local).
+- Run `crc setup` to prepare OpenShift Local. This will take a while since it needs to download the crc bundle which is over 4,5GB and the ReHat network is not always very performant, then decompress it into a 31GB VM image.
 ```
-./01_install_plugin.sh
+Your system is correctly setup for using CRC. Use 'crc start' to start the instance
+[elapsed 49m13s (CPU 16.1%)] crc setup
+```
+- Run `crc start` to create your OpenShift Local cluster. This will take a few minutes as well.
+```
+Started the OpenShift cluster.
+
+The server is accessible via web console at:
+  https://console-openshift-console.apps-crc.testing
+
+Log in as administrator:
+  Username: kubeadmin
+  Password: automagicallygenerated
+
+Log in as user:
+  Username: developer
+  Password: developer
+
+Use the 'oc' command line interface:
+  $ eval $(crc oc-env)
+  $ oc login -u kubeadmin https://api.crc.testing:6443 (Developer doesn't have permissions to deploy the operator)
+```
+- Run `eval $(crc oc-env)` and `oc login -u developer https://api.crc.testing:6443`
+- Create a new project called `demo` using `oc new-project demo`
+```
+-main- ✗ ~/openshiftdemo oc new-project demo
+Now using project "demo" on server "https://api.crc.testing:6443".
+```
+
+## Demo flow
+- Install the cnpg plug-in for kubectl using `./01_install_plugin.sh`
 ./02_install_operator.sh
 ./03_check_operator_installed.sh
 ./05_install_cluster.sh
